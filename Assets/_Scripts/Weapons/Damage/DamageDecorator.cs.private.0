@@ -1,0 +1,26 @@
+﻿public abstract class DamageDecorator : IBaseDamage
+{
+    protected IBaseDamage damage;
+
+    protected DamageDecorator(IBaseDamage baseDamage)
+    {
+        damage = baseDamage;
+    }
+
+    public int GetDamage()
+    {
+        return damage.GetDamage();
+    }
+
+    public DamageType GetDamageType()
+    {
+        return damage.GetDamageType();
+    }
+
+    public virtual void ApplyDamage(IDamageable i_damage)
+    {
+        damage.ApplyDamage(i_damage);
+    }
+
+}
+

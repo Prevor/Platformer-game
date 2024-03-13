@@ -1,0 +1,19 @@
+﻿public class DamageFire : DamageDecorator
+{
+    private int _damageFire;
+    private DamageType _damageType;
+
+    public DamageFire(IBaseDamage baseDamage, int damageFire, DamageType damageType) : base(baseDamage)
+    {
+        _damageFire = damageFire;
+        _damageType = damageType;
+    }
+
+    public override void ApplyDamage(IDamageable damage)
+    {
+        base.ApplyDamage(damage);
+
+        damage.TakeDamage(_damageType, _damageFire);
+    }
+}
+
