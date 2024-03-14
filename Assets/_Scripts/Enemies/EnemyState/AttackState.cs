@@ -101,7 +101,7 @@ public class AttackState : EnemyState
     public IEnumerator AttackTimeOut(Player damage)
     {
         yield return new WaitForSeconds(0.4f);
-        damage.TakeDamage(DamageType.Physical, 10);
+   //     damage.TakeDamage(DamageType.Physical, 10);
 
     }
 }
