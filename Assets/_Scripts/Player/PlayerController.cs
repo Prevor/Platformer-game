@@ -15,20 +15,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _comboLock;
     [SerializeField] private float _radiusSphere;
     [SerializeField] private Transform _spherePosition;
-
+    
     CharacterController _controller;
 
     [SerializeField] Animator btnUI;
 
     public UnityAction PlayerShoot;
 
-    private Vector2 _playerVelocity;
+    private Vector3 _playerVelocity;
     private Vector2 _inputDirection;
     private bool _isGrounded;
     private bool _isJumping;
     private bool _isDoubleJumping;
     private bool _isAttack;
-
 
     private int _jumpCount = 0;
 
@@ -119,7 +118,6 @@ public class PlayerController : MonoBehaviour
                 {
                     _currentCombo++;
 
-
                     if (_firstAttack)
                     {
                         _firstAttack = false;
@@ -135,8 +133,6 @@ public class PlayerController : MonoBehaviour
             {
                 _isAttack = false;
                 StartCoroutine(LockCombo(2.5f));
-
-
             }
 
         }
@@ -176,6 +172,11 @@ public class PlayerController : MonoBehaviour
         _controller.Move(_playerVelocity * Time.fixedDeltaTime);
     }
 
+    public void Jump()
+    {
+        _playerVelocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
@@ -185,11 +186,6 @@ public class PlayerController : MonoBehaviour
     public void AttackFinish()
     {
         _isAttack = false;
-    }
-
-    public void Jump()
-    {
-        _playerVelocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
     }
 
     public void ResetInput()

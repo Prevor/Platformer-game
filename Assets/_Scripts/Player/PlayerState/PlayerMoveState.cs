@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
 
 public class PlayerMoveState : PlayerState
 {
-    private Vector2 _inputDirection;
+    private Vector3 _inputDirection;
+    private float turnSmoothVelocity;
+
 
     public PlayerMoveState(Player player, PlayerStateMachine stateMachine, string animBoolName) : base(player, stateMachine, animBoolName)
     {
@@ -25,7 +24,7 @@ public class PlayerMoveState : PlayerState
     public override void LogicUpdate()
     {
         _inputDirection = Player.PlayerController.InputDirection;
-        if (_inputDirection == Vector2.zero)
+        if (_inputDirection == Vector3.zero)
         {
             StateMachine.ChangeState(Player.IdleState);
         }
@@ -33,7 +32,7 @@ public class PlayerMoveState : PlayerState
         {
             StateMachine.ChangeState(Player.JumpState);
         }
-        else if(!Player.PlayerController.IsGrounded && Player.PlayerController.PlayerVelocity.y < -0.3f)
+        else if (!Player.PlayerController.IsGrounded && Player.PlayerController.PlayerVelocity.y < -0.3f)
         {
             StateMachine.ChangeState(Player.AirState);
         }
@@ -50,12 +49,19 @@ public class PlayerMoveState : PlayerState
 
     private void Movement()
     {
-        Vector3 movementDirection = new Vector3(_inputDirection.x, 0, _inputDirection.y);
-        Player.CharacterController.Move(movementDirection * Player.PlayerController.PlayerSpeed * Time.fixedDeltaTime);
+        Vector3 movementDirection = new Vector3(_inputDirection.x, 0, _inputDirection.y).normalized;
 
         if (movementDirection != Vector3.zero)
         {
-            Player.transform.forward = movementDirection;
+            //Turns the player in the right direction
+            float targetAngle = Mathf.Atan2(movementDirection.x, movementDirection.z) * Mathf.Rad2Deg + Player.PlayerCamera.eulerAngles.y;
+            float angleSmooth = Mathf.SmoothDampAngle(Player.transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, 0.15f);
+            Player.transform.rotation = Quaternion.Euler(0f, angleSmooth, 0f);
+
+            // Move player
+            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+            Player.CharacterController.Move(moveDir.normalized * Player.PlayerController.PlayerSpeed * Time.fixedDeltaTime);
+
         }
 
     }

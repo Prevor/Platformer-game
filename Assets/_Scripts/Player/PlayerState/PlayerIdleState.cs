@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 
 public class PlayerIdleState : PlayerState
 {
@@ -29,7 +26,7 @@ public class PlayerIdleState : PlayerState
         else if (Player.PlayerController.IsJumping)
         {
             StateMachine.ChangeState(Player.JumpState);
-        }  
+        }
         else if (Player.PlayerController.IsAttack)
         {
             StateMachine.ChangeState(Player.AttackState);

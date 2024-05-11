@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
@@ -9,6 +6,7 @@ public class Player : MonoBehaviour
     public int _maxHealth = 100;
     [SerializeField] private Animator _animator;
     [SerializeField] private Crossbow _crossbow;
+    [SerializeField] private Transform _playerCamera;
 
     //Player State
     public PlayerStateMachine StateMachine { get; private set; }
@@ -24,10 +22,10 @@ public class Player : MonoBehaviour
     public Animator Animator { get; private set; }
     public Crossbow Crossbow { get; private set; }
     public CharacterController CharacterController { get; internal set; }
+    public Transform PlayerCamera { get; private set; }
 
     private void Awake()
     {
-
         StateMachine = new PlayerStateMachine();
         IdleState = new PlayerIdleState(this, StateMachine, "IsIdle");
         MoveState = new PlayerMoveState(this, StateMachine, "IsRunning");
@@ -43,6 +41,7 @@ public class Player : MonoBehaviour
         PlayerController = GetComponent<PlayerController>();
         Animator = _animator;
         Crossbow = _crossbow;
+        PlayerCamera = _playerCamera;
         CharacterController = GetComponent<CharacterController>();
         StateMachine.Initialize(IdleState);
     }
