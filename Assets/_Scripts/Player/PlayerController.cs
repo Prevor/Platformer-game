@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _comboLock;
     [SerializeField] private float _radiusSphere;
     [SerializeField] private Transform _spherePosition;
+    [SerializeField] private int _layerMask;
 
     CharacterController _controller;
 
@@ -54,6 +55,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        _layerMask = ~(1 << LayerMask.NameToLayer("HurtBox"));
         _controller = GetComponent<CharacterController>();
     }
 
@@ -73,7 +75,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _isGrounded = Physics.CheckSphere(_spherePosition.position, _radiusSphere);
+        _isGrounded = Physics.CheckSphere(_spherePosition.position, _radiusSphere, _layerMask);
 
         if (_isGrounded && _playerVelocity.y < 0)
         {

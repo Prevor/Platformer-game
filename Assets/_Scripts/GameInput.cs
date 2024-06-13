@@ -23,7 +23,6 @@ public class GameInput : MonoBehaviour
         
     }
 
-
     public Vector2 GetMovementVector()
     {
         Vector2 inputVector = playerInput.Player.Move.ReadValue<Vector2>();

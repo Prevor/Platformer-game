@@ -30,6 +30,8 @@ public class UpdateHealthBar : MonoBehaviour
 
     private void Update()
     {
+        hitpointBarSlider.value = player._health;
+        healthText.text = hitpointBarSlider.value.ToString();
         if (CheakHealth())
         {
             player._health = player._maxHealth;
@@ -44,6 +46,7 @@ public class UpdateHealthBar : MonoBehaviour
             healthText.text = hitpointBarSlider.value.ToString();
             player._health += countHealthPoint;
         }
+        
     }
 
     private bool CheakHealth()

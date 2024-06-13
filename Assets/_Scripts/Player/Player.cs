@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public int _maxHealth = 100;
     [SerializeField] private Animator _animator;
     [SerializeField] private Crossbow _crossbow;
+    [SerializeField] private GameObject _hurtBox;
 
     //Player State
     public PlayerStateMachine StateMachine { get; private set; }
@@ -24,6 +25,16 @@ public class Player : MonoBehaviour
     public Animator Animator { get; private set; }
     public Crossbow Crossbow { get; private set; }
     public CharacterController CharacterController { get; internal set; }
+
+
+
+    public float knockbackForce = 5f; // Adjust this to your liking
+    public float knockbackDuration = 0.2f; // Adjust this to your liking
+    public float knockbackDecay = 5f; // Adjust this to your liking
+
+    private Vector3 knockbackVelocity;
+    private Vector3 knockbackDirection = Vector3.up;
+    [SerializeField] private bool isDamage;
 
     private void Awake()
     {
@@ -49,19 +60,34 @@ public class Player : MonoBehaviour
     private void Update()
     {
         StateMachine.CurrentState.LogicUpdate();
+        if (knockbackVelocity != Vector3.zero)
+        {
+            knockbackVelocity -= knockbackVelocity * knockbackDecay * Time.deltaTime;
+            if (knockbackVelocity.magnitude < 0.1f) // To avoid very small values causing jitter
+            {
+                knockbackVelocity = Vector3.zero;
+            }
+        }
     }
     private void FixedUpdate()
     {
         PlayerController.Land();
         StateMachine.CurrentState.PhysicsUpdate();
+
+        CharacterController.Move(knockbackVelocity);
     }
 
-    public void ApplyDamage(DamageType damageType, int damage)
+    public void ApplyDamage(DamageType damageType, int damage, Vector3 direction)
     {
         _health -= damage;
+        isDamage = true;
         if (_health <= 0)
         {
             Die();
+        }
+        else
+        {
+            knockbackVelocity = (direction+new Vector3(0,0.5f,0)) * knockbackForce * Time.deltaTime; // Set the knockback velocity
         }
     }
 

@@ -13,6 +13,7 @@ public class IdleState : EnemyState
 
     public override void Enter()
     {
+       
         _timeIdle = Random.Range(0.5f, 2f);
         base.Enter();
     }
@@ -23,7 +24,7 @@ public class IdleState : EnemyState
         base.Exit();
     }
 
-    public override void LogicUpdate()
+    public override void LogicUpdate() 
     {
         _timer += Time.deltaTime;
 

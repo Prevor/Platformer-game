@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerShootState : PlayerState
@@ -9,6 +7,7 @@ public class PlayerShootState : PlayerState
     private float _shootEnd = 1f;
     private Vector2 _inputDirection;
     private string _animTriggerName;
+
     public PlayerShootState(Player player, PlayerStateMachine stateMachine, string animBoolName, string animTriggerName) : base(player, stateMachine, animBoolName)
     {
         _animTriggerName = animTriggerName;
@@ -30,7 +29,7 @@ public class PlayerShootState : PlayerState
         Player.PlayerController.PlayerShoot -= Shoot;
 
         base.Exit();
-       
+
     }
 
     public override void LogicUpdate()
@@ -66,7 +65,6 @@ public class PlayerShootState : PlayerState
         if (movementDirection != Vector3.zero)
         {
             Player.transform.forward = movementDirection;
-        
         }
     }
 
@@ -76,8 +74,9 @@ public class PlayerShootState : PlayerState
         Player.Crossbow.Cast();
         Player.Animator.SetTrigger(_animTriggerName);
     }
+
     private IEnumerator ShootDelay(float time)
-    { 
+    {
         yield return new WaitForSeconds(time);
         Shoot();
     }

@@ -11,11 +11,13 @@ public class PlayerAttack : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+                Debug.Log("sword attack");
         if (_player.IsAttack)
         {
             IDamageable damageable = other.GetComponent<IDamageable>();
             if (damageable != null)
             {
+                Debug.Log("sword attack2");
                 damageable.TakeDamage(DamageType.Physical, 20);
                 Instantiate(_attackEffect, other.transform.position, Quaternion.identity);
             }

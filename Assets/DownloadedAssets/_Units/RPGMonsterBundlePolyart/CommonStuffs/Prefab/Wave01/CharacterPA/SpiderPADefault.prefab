@@ -711,6 +711,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f132f7da878db94a99dbadfeedef1d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _healthText: {fileID: 0}
+  _health: 0
 --- !u!114 &2459563220917151716
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -734,7 +736,7 @@ MonoBehaviour:
   _isChase: 0
   _detectionLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
   _detectionAttack: {fileID: 0}
 --- !u!195 &2149971374384037500
 NavMeshAgent:
