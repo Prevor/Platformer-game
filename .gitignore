@@ -71,3 +71,6 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 /Assets/Scenes/Location 2_UModeler
+Assets/Scenes/Location 1.unity
+Assets/Scenes/Location 1.unity.meta
+Assets/Scenes/Location 2_UModeler.meta

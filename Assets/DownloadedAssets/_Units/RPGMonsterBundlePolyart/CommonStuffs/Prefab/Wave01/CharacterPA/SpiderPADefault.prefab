@@ -508,8 +508,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7331173333850079533}
   - {fileID: 4733900664510384}
+  - {fileID: 7331173333850079533}
   m_Father: {fileID: 4843028258353612}
   m_LocalEulerAnglesHint: {x: 0.005460495, y: 93.03592, z: -35.345566}
 --- !u!1 &1521424371730358
@@ -653,7 +653,6 @@ GameObject:
   - component: {fileID: 247174972478791783}
   - component: {fileID: 2459563220917151716}
   - component: {fileID: 2149971374384037500}
-  - component: {fileID: 367644375880241781}
   m_Layer: 0
   m_Name: SpiderPADefault
   m_TagString: Untagged
@@ -729,6 +728,8 @@ MonoBehaviour:
   _playerPosition: {fileID: 0}
   _hitBox: {fileID: 7331173333850079533}
   _hitBoxRadius: 0.18
+  _radiusAttack: 0
+  _rayDistance: 0
   _radiusDetection: 3.98
   _radiusPatrol: 4.8
   _isDistanceAttack: 0
@@ -760,29 +761,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!136 &367644375880241781
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1557585983417840}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.88
-  m_Height: 3.12
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.66, z: 0}
 --- !u!1 &1574160754023944
 GameObject:
   m_ObjectHideFlags: 0
@@ -1475,7 +1453,7 @@ Transform:
   m_GameObject: {fileID: 6206889028506733937}
   serializedVersion: 2
   m_LocalRotation: {x: 0.20508307, y: -0.67671335, z: 0.20508307, w: 0.67671335}
-  m_LocalPosition: {x: -1.118, y: -0.603, z: -0}
+  m_LocalPosition: {x: -1.052, y: -0.806, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1493,3 +1471,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bae2101cf4a3505419e1fb2cd96d3b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enemy: {fileID: 0}
+  _hitEffect: {fileID: 0}

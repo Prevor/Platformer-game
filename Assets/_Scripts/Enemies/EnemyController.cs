@@ -8,10 +8,10 @@ using UnityEngine.AI;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] private Transform _pointNav;
-    [SerializeField] private Transform _playerPosition;
     [SerializeField] private Transform _hitBox;
+    
 
-    [SerializeField] private float _hitBoxRadius;
+   // [SerializeField] private float _hitBoxRadius;
     [SerializeField] private float _radiusAttack;
     [SerializeField] private float _rayDistance;
     [SerializeField] private float _radiusDetection;
@@ -28,30 +28,25 @@ public class EnemyController : MonoBehaviour
     private Animator _animator;
     private NavMeshAgent _navMesh;
 
-
     public EnemyStateMachine StateMachine { get; private set; }
     public IdleState IdleState { get; private set; }
     public ChaseState ChaseState { get; private set; }
     public PatrolState PatrolState { get; private set; }
     public AttackState AttackState { get; private set; }
-
+    
     public Animator Animator { get => _animator; private set => _animator = value; }
     public Transform PointNav { get => _pointNav; set => _pointNav = value; }
     public NavMeshAgent NavMesh { get => _navMesh; set => _navMesh = value; }
-    public Transform PlayerPosition { get => _playerPosition; set => _playerPosition = value; }
+    public PlayerController _playerController;
 
-    public bool IsAttack { get => _isAttack; set => _isAttack = value; }
+    //public bool IsAttack { get => _isAttack; set => _isAttack = value; }
     public bool IsChase { get => _isChase; set => _isChase = value; }
-    public float HitBoxSize { get => _hitBoxRadius; set => _hitBoxRadius = value; }
+   // public float HitBoxSize { get => _hitBoxRadius; set => _hitBoxRadius = value; }
     public float Distance { get => _distance; set => _distance = value; }
     public float RayDistance { get => _rayDistance; set => _rayDistance = value; }
-    public LayerMask DetectionLayer { get => _detectionLayer; set => _detectionLayer = value; }
+    //public LayerMask DetectionLayer { get => _detectionLayer; set => _detectionLayer = value; }
     public Vector3 Direction { get; private set; }
 
-    private void OnEnable()
-    {
-
-    }
     private void Awake()
     {
         _animator = GetComponent<Animator>();
@@ -65,14 +60,15 @@ public class EnemyController : MonoBehaviour
     }
     private void Start()
     {
-        _playerPosition = PlayerManager.instance.Player.transform;
+        //_playerPosition = PlayerManager.instance.Player.transform;
+        // _player = 
         StateMachine.Initialize(IdleState);
     }
     private void Update()
     {
         if (Physics.CheckSphere(transform.position, _radiusDetection, _detectionLayer.value))
         {
-            _distance = Vector3.Distance(transform.position, _playerPosition.position);
+            _distance = Vector3.Distance(transform.position, _playerController.PlayerPosition.position);
             _isChase = true;
         }
         else
@@ -88,14 +84,13 @@ public class EnemyController : MonoBehaviour
     } 
     public void FaceTarget()
     {
-        Direction = (_playerPosition.position - transform.position).normalized;
+        Direction = (_playerController.PlayerPosition.position - transform.position).normalized;
         Quaternion lookRptation = Quaternion.LookRotation(new Vector3(Direction.x, 0, Direction.z));
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRptation, Time.deltaTime * 5f);
     }
     public bool IsEnemyAttack()
     {
-       return Physics.CheckSphere(transform.position, _radiusAttack, _detectionLayer.value);
-       
+       return Physics.CheckSphere(transform.position, _radiusAttack, _detectionLayer.value) && _playerController._playerHealth.Health != 0;
     }
 
     private void OnDrawGizmos()

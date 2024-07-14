@@ -4,13 +4,14 @@ public class EnemyAttack : MonoBehaviour
 {
     [SerializeField] private EnemyController _enemy;
     [SerializeField] private ParticleSystem _hitEffect;
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<HurtBox>(out HurtBox damage))
+        if (other.TryGetComponent<IDamageable>(out IDamageable damage))
         {
-            damage.PlayerDamage(DamageType.Physical, 10, _enemy.Direction);
+            Debug.Log("Successesfuly attack Player by spider");
+            damage.TakeDamage(DamageType.Physical, 10);
             _hitEffect.Play();
         }
     }
-
 }

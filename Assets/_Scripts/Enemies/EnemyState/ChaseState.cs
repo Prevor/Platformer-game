@@ -1,12 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
-using UnityEngine.AI;
-
 public class ChaseState : EnemyState
 {
-
     private float _radiusAttack;
 
     public ChaseState(EnemyController enemy, EnemyStateMachine stateMachine, string animBoolName, float radiusAttack) : base(enemy, stateMachine, animBoolName)
@@ -26,7 +19,6 @@ public class ChaseState : EnemyState
 
     public override void LogicUpdate()
     {
-
         if (!EnemyController.IsChase)
         {
             StateMachine.ChangeState(EnemyController.IdleState);
@@ -41,8 +33,7 @@ public class ChaseState : EnemyState
     {
         if (EnemyController.Distance >= EnemyController.RayDistance)
         {
-
-            EnemyController.NavMesh.SetDestination(EnemyController.PlayerPosition.position);
+            EnemyController.NavMesh.SetDestination(EnemyController._playerController.PlayerPosition.position);
         }
 
         EnemyController.FaceTarget();

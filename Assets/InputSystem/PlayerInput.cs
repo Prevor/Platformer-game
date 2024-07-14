@@ -89,6 +89,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Press"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Respawn"",
+                    ""type"": ""Button"",
+                    ""id"": ""c6a10173-ddf5-4941-9f9f-6ea7ab661f1d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -289,6 +298,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Item3"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""95111d02-ae7f-407b-aa74-875c0ebae674"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Respawn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -304,6 +324,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_Item1 = m_Player.FindAction("Item1", throwIfNotFound: true);
         m_Player_Item2 = m_Player.FindAction("Item2", throwIfNotFound: true);
         m_Player_Item3 = m_Player.FindAction("Item3", throwIfNotFound: true);
+        m_Player_Respawn = m_Player.FindAction("Respawn", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -372,6 +393,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Item1;
     private readonly InputAction m_Player_Item2;
     private readonly InputAction m_Player_Item3;
+    private readonly InputAction m_Player_Respawn;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -383,6 +405,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Item1 => m_Wrapper.m_Player_Item1;
         public InputAction @Item2 => m_Wrapper.m_Player_Item2;
         public InputAction @Item3 => m_Wrapper.m_Player_Item3;
+        public InputAction @Respawn => m_Wrapper.m_Player_Respawn;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -413,6 +436,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Item3.started += instance.OnItem3;
             @Item3.performed += instance.OnItem3;
             @Item3.canceled += instance.OnItem3;
+            @Respawn.started += instance.OnRespawn;
+            @Respawn.performed += instance.OnRespawn;
+            @Respawn.canceled += instance.OnRespawn;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -438,6 +464,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Item3.started -= instance.OnItem3;
             @Item3.performed -= instance.OnItem3;
             @Item3.canceled -= instance.OnItem3;
+            @Respawn.started -= instance.OnRespawn;
+            @Respawn.performed -= instance.OnRespawn;
+            @Respawn.canceled -= instance.OnRespawn;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -464,5 +493,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnItem1(InputAction.CallbackContext context);
         void OnItem2(InputAction.CallbackContext context);
         void OnItem3(InputAction.CallbackContext context);
+        void OnRespawn(InputAction.CallbackContext context);
     }
 }

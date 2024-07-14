@@ -10,7 +10,7 @@ public class UpdateHealthBar : MonoBehaviour
     [SerializeField] private TextMeshProUGUI healthText;
     public static bool isMaxHealthBar;
 
-    [SerializeField] private Player player;
+    [SerializeField] private PlayerHealth _playerHealth;
 
     private void Awake()
     {
@@ -19,8 +19,8 @@ public class UpdateHealthBar : MonoBehaviour
     
     private void Start()
     {
-        hitpointBarSlider.maxValue = player._maxHealth;
-        hitpointBarSlider.value = player._health;
+        hitpointBarSlider.maxValue = _playerHealth.maxHealth;
+        hitpointBarSlider.value = _playerHealth.health;
         healthText.text = hitpointBarSlider.value.ToString();
     }
 
@@ -30,11 +30,11 @@ public class UpdateHealthBar : MonoBehaviour
 
     private void Update()
     {
-        hitpointBarSlider.value = player._health;
+        hitpointBarSlider.value = _playerHealth.health;
         healthText.text = hitpointBarSlider.value.ToString();
         if (CheakHealth())
         {
-            player._health = player._maxHealth;
+            _playerHealth.health = _playerHealth.maxHealth;
         }
     }
 
@@ -44,9 +44,8 @@ public class UpdateHealthBar : MonoBehaviour
         {
             hitpointBarSlider.value += countHealthPoint;
             healthText.text = hitpointBarSlider.value.ToString();
-            player._health += countHealthPoint;
+            _playerHealth.health += countHealthPoint;
         }
-        
     }
 
     private bool CheakHealth()

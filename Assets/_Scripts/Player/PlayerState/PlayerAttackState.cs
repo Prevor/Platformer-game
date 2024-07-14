@@ -16,10 +16,15 @@ public class PlayerAttackState : PlayerState
     public override void LogicUpdate()
     {
         Player.Animator.SetInteger("CurrentCombo", Player.PlayerController.CurrentCombo);
-        if (!Player.PlayerController.IsAttack || Player.PlayerController.ComboEnd)
+        if (!Player.PlayerController.IsAttack)
         {
             StateMachine.ChangeState(Player.IdleState);
         }
+        //else if (Player.PlayerController.)
+        //{
+
+        //}
+
     }
 
     public override void PhysicsUpdate()

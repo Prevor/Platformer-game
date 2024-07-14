@@ -35,6 +35,14 @@ public class PlayerIdleState : PlayerState
         {
             StateMachine.ChangeState(Player.ShootState);
         }
+        else if (Player.PlayerController.IsGetingHit)
+        {
+            StateMachine.ChangeState(Player.GetHitState);
+        }
+        else if (Player.PlayerController.IsDead)
+        {
+            StateMachine.ChangeState(Player.DeadState);
+        }
     }
 
     public override void PhysicsUpdate()

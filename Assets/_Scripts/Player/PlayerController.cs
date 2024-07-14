@@ -1,46 +1,98 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem.Interactions;
 
+#region PLAYER CONTROLLER GUI
+//using UnityEditor;
+//[CustomEditor(typeof(PlayerController))]
+//public class PlayerControllerEditor : Editor
+//{
+//    private PlayerController playerController;
+
+//    private void OnEnable()
+//    {
+//        playerController = (PlayerController)target;
+//    }
+
+//    public override void OnInspectorGUI()
+//    {
+//        if (playerController == null) return;
+
+//        serializedObject.Update();
+//        EditorGUILayout.BeginVertical();
+
+
+//        EditorGUILayout.Space();
+//        EditorGUILayout.LabelField("Player in space", EditorStyles.boldLabel);
+//        EditorGUILayout.PropertyField(serializedObject.FindProperty("_playerSpeed"));
+//        EditorGUILayout.PropertyField(serializedObject.FindProperty("_jumpHeight"));
+//        EditorGUILayout.PropertyField(serializedObject.FindProperty("_gravity"));
+
+//        EditorGUILayout.Space();
+//        EditorGUILayout.LabelField("Aattacks", EditorStyles.boldLabel);
+//        EditorGUILayout.PropertyField(serializedObject.FindProperty("_maxCombo"));
+//        EditorGUILayout.PropertyField(serializedObject.FindProperty("_comboTimeout"));
+//        EditorGUILayout.PropertyField(serializedObject.FindProperty("_comboLock"));
+
+//        //EditorGUILayout.Space();
+//        //if (GUILayout.Button("Respawn player"))
+//        //    playerController.RespawnPlayer();
+
+//        EditorGUILayout.EndVertical();
+
+//        serializedObject.ApplyModifiedProperties();
+
+//        if (GUI.changed)
+//            UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
+//    }
+//}
+#endregion
+
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private GameInput _gameInput;
-    [SerializeField] private float _playerSpeed = 3.0f;
-    [SerializeField] private float _jumpHeight = 2f;
-    [SerializeField] private float _gravity = -9.81f;
-    [SerializeField] private int _maxCombo = 4;
-    [SerializeField] private float _comboTimeout;
-    [SerializeField] private float _comboLock;
-    [SerializeField] private float _radiusSphere;
-    [SerializeField] private Transform _spherePosition;
-    [SerializeField] private int _layerMask;
-
     CharacterController _controller;
-
+    [SerializeField] private GameInput _gameInput;
     [SerializeField] Animator btnUI;
+    public PlayerHealth _playerHealth;
 
-    public UnityAction PlayerShoot;
-
+    //Player in space
+    [SerializeField, Range(1, 10)] private float _playerSpeed = 5.0f;
+    [SerializeField, Range(1, 5)] private float _jumpHeight = 2f;
+    [SerializeField, Range(-5, -15)] private float _gravity = -9.81f;
     private Vector2 _playerVelocity;
     private Vector2 _inputDirection;
-    private bool _isGrounded;
     private bool _isJumping;
     private bool _isDoubleJumping;
-    private bool _isAttack;
-
-
     private int _jumpCount = 0;
+    private bool _isIdle;
 
+    //For cheack player on the ground
+    [SerializeField] private float _radiusSphere;
+    [SerializeField] private Transform _spherePosition;
+    [SerializeField] private LayerMask _groundLayer;
+    private bool _isGrounded;
+    
+    //Attacks
+    private bool _isAttack;
+    //Combo
+    [SerializeField] private float _timeForNextCombo;
+    [SerializeField] private float _comboLock;
     private int _currentCombo = 0;
+    private bool _canAttack = true;
     private float _comboCurrentTimer;
-    private bool _comboEnd;
-    private bool _attack;
-    private bool _firstAttack;
+    //Shooting
     private bool _isShooting;
-    private object _shootCount;
+    public UnityAction PlayerShoot;
 
+    //Get damage
+    private bool _isGetingHit;
+    private bool _isDead;
+
+
+    public Transform PlayerPosition { get => transform; }
     public bool IsAttack { get => _isAttack; set => _isAttack = value; }
     public float PlayerSpeed { get => _playerSpeed; set => _playerSpeed = value; }
     public Vector2 PlayerVelocity { get => _playerVelocity; set => _playerVelocity = value; }
@@ -49,13 +101,12 @@ public class PlayerController : MonoBehaviour
     public bool IsJumping { get => _isJumping; set => _isJumping = value; }
     public bool IsDoubleJumping { get => _isDoubleJumping; set => _isDoubleJumping = value; }
     public int CurrentCombo { get => _currentCombo; set => _currentCombo = value; }
-    public bool ComboEnd { get => _comboEnd; set => _comboEnd = value; }
     public bool IsShooting { get => _isShooting; set => _isShooting = value; }
-
+    public bool IsGetingHit { get => _isGetingHit; set => _isGetingHit = value; }
+    public bool IsDead { get => _isDead; set => _isDead = value; }
 
     private void Awake()
     {
-        _layerMask = ~(1 << LayerMask.NameToLayer("HurtBox"));
         _controller = GetComponent<CharacterController>();
     }
 
@@ -63,7 +114,7 @@ public class PlayerController : MonoBehaviour
     {
         _comboCurrentTimer += Time.deltaTime;
 
-        if (_comboCurrentTimer > _comboTimeout)
+        if (_comboCurrentTimer > _timeForNextCombo)
         {
             _currentCombo = 0;
             _isAttack = false;
@@ -72,23 +123,28 @@ public class PlayerController : MonoBehaviour
         InputUser();
     }
 
-
     private void FixedUpdate()
     {
-        _isGrounded = Physics.CheckSphere(_spherePosition.position, _radiusSphere, _layerMask);
+        _isGrounded = Physics.CheckSphere(_spherePosition.position, _radiusSphere, _groundLayer);
 
         if (_isGrounded && _playerVelocity.y < 0)
         {
             _jumpCount = 0;
             _playerVelocity.y = -2f;
-
+            
         }
-    }
 
+        Land();
+    }
 
     private void InputUser()
     {
         _inputDirection = _gameInput.GetMovementVector();
+
+        if (_inputDirection != Vector2.zero && IsGrounded)
+        {
+            _isIdle = true;
+        }
 
         if (_gameInput.playerInput.Player.Jump.triggered)
         {
@@ -111,36 +167,28 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-
-        if (_gameInput.playerInput.Player.Attack1.triggered && _isGrounded && !_comboEnd)
+        if (_gameInput.playerInput.Player.Attack1.triggered && _isGrounded)
         {
-            if (_currentCombo < _maxCombo)
+            _isAttack = true;
+
+            if (_canAttack)
             {
-                _isAttack = true;
-                if (!_attack)
+                if (_currentCombo < 4)
                 {
+                    _canAttack = false;
                     _currentCombo++;
+                    _comboCurrentTimer = 0;
 
-
-                    if (_firstAttack)
-                    {
-                        _firstAttack = false;
-                    }
-                    else
-                    {
-                        StartCoroutine(LockCombo(_comboLock));
-                    }
+                    StartCoroutine(LockComboAttack(_comboLock));
                 }
-                _comboCurrentTimer = 0;
+                else
+                {
+                    _canAttack = false;
+                    _currentCombo = 0;
+
+                    StartCoroutine(LockComboAttack(1.5f));
+                }
             }
-            if (_currentCombo >= _maxCombo)
-            {
-                _isAttack = false;
-                StartCoroutine(LockCombo(2.5f));
-
-
-            }
-
         }
 
         _gameInput.playerInput.Player.Attack2.performed += context =>
@@ -148,28 +196,28 @@ public class PlayerController : MonoBehaviour
             if (context.interaction is PressInteraction && _isGrounded)
             {
                 _isShooting = true;
-                if (!_attack)
-                {
-                    btnUI.SetTrigger("Pressed");
+                btnUI.SetTrigger("Pressed");
 
-                    PlayerShoot?.Invoke();
-                    StartCoroutine(LockCombo(0.5f));
-                }
+                PlayerShoot?.Invoke();
+                
+                StartCoroutine(LockShooting( 0.5f));
             }
         };
 
+        if (_gameInput.playerInput.Player.Respawn.triggered && IsDead)
+        {
+            RespawnPlayer();
+        }
     }
 
-    private IEnumerator LockCombo(float comboLock)
+    private IEnumerator LockComboAttack(float comboLock)
     {
-        _attack = true;
-        if (comboLock >= 1f)
-        {
-            _comboEnd = true;
-        }
         yield return new WaitForSeconds(comboLock);
-        _attack = false;
-        _comboEnd = false;
+        _canAttack = true;
+    }
+    private IEnumerator LockShooting(float lockShooting)
+    {
+        yield return new WaitForSeconds(lockShooting);
     }
 
     public void Land()
@@ -184,11 +232,6 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawSphere(_spherePosition.position, _radiusSphere);
     }
 
-    public void AttackFinish()
-    {
-        _isAttack = false;
-    }
-
     public void Jump()
     {
         _playerVelocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
@@ -200,7 +243,13 @@ public class PlayerController : MonoBehaviour
         _isJumping = false;
         _isDoubleJumping = false;
         _jumpCount = 0;
-        _shootCount = 0;
-        IsAttack = false;
+        _isAttack = false;
+    }
+
+    public void RespawnPlayer()
+    {
+        _isDead = false;
+        _playerHealth.health = 100;
+        Debug.Log("SAYNTRES");
     }
 }

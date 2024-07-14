@@ -40,6 +40,10 @@ public class PlayerMoveState : PlayerState
         {
             StateMachine.ChangeState(Player.ShootState);
         }
+        else if (Player.PlayerController.IsAttack)
+        {
+            StateMachine.ChangeState(Player.AttackState);
+        }
 
     }
     public override void PhysicsUpdate()

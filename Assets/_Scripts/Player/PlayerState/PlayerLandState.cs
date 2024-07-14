@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerLandState : PlayerState
 {
-    private float _timerLand = 0.7f;
+    private float _timerLand = 0.2f;
     public PlayerLandState(Player player, PlayerStateMachine stateMachine, string animBoolName) : base(player, stateMachine, animBoolName)
     {
     }
@@ -22,7 +22,7 @@ public class PlayerLandState : PlayerState
         _timerLand -= Time.deltaTime;
         if (_timerLand <= 0)
         {
-            _timerLand = 0.7f;
+            _timerLand = 0.2f;
             Player.PlayerController.ResetInput();
             if (Player.PlayerController.InputDirection != Vector2.zero)
             {

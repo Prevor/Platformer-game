@@ -30,8 +30,6 @@ public class AttackState : EnemyState
 
     public override void LogicUpdate()
     {
-
-        
         _timeAttack += Time.deltaTime;
 
         if (!EnemyController.IsEnemyAttack())
