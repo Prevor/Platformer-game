@@ -27,6 +27,7 @@ public class ChaseState : EnemyState
         {
             StateMachine.ChangeState(EnemyController.AttackState);
         }
+
     }
 
     public override void PhysicsUpdate()
@@ -38,5 +39,4 @@ public class ChaseState : EnemyState
 
         EnemyController.FaceTarget();
     }
-
 }

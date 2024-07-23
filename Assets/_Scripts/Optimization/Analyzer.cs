@@ -13,7 +13,8 @@ public class Analyzer : MonoBehaviour
 
     void Start()
     {
-        logFilePath = Path.Combine(Application.persistentDataPath, "performance_log.txt");
+        logFilePath = Path.Combine(Application.persistentDataPath, "performance_log.json");
+        Debug.Log("Analyzer log file path: " + logFilePath);
         optimizer = GetComponent<Optimizer>();
     }
 
@@ -28,21 +29,21 @@ public class Analyzer : MonoBehaviour
 
     void AnalyzeData()
     {
-        string[] logLines = File.ReadAllLines(logFilePath);
-        string lastLogLine = logLines[logLines.Length - 1];
-        string[] logData = lastLogLine.Split(',');
+        if (File.Exists(logFilePath))
+        {
+            string json = File.ReadAllText(logFilePath);
+            var performanceDataList = JsonUtility.FromJson<DataCollector.PerformanceDataList>(json);
 
-        float fps = float.Parse(logData[1]);
-        long totalMemory = long.Parse(logData[2]);
-        long reservedMemory = long.Parse(logData[3]);
-        long monoMemory = long.Parse(logData[4]);
-        float cpuUsage = float.Parse(logData[5]);
+            if (performanceDataList.data.Count > 0)
+            {
+                var lastData = performanceDataList.data[performanceDataList.data.Count - 1];
+                AnalyzePerformance(lastData.avgFps, lastData.avgTotalMemory, lastData.avgReservedMemory, lastData.avgMonoMemory, lastData.avgCpuUsage);
+            }
+        }
+    }   
 
-        AnalyzePerformance(fps, totalMemory, reservedMemory, monoMemory, cpuUsage);
-    }
-
-    void AnalyzePerformance(float fps, long totalMemory, long reservedMemory, long monoMemory, float cpuUsage)
+    void AnalyzePerformance(float avgFps, long avgTotalMemory, long avgReservedMemory, long avgMonoMemory, float avgCpuUsage)
     {
-        optimizer.Optimize(fps, totalMemory, reservedMemory, monoMemory, cpuUsage);
+        optimizer.Optimize(avgFps, avgTotalMemory, avgReservedMemory, avgMonoMemory, avgCpuUsage);
     }
 }

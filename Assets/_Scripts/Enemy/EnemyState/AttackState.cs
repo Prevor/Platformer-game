@@ -1,7 +1,4 @@
-using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
-
 
 public class AttackState : EnemyState
 {
@@ -9,7 +6,7 @@ public class AttackState : EnemyState
     private Transform _hitBox;
     private float _timeAttack;
 
-    public AttackState(EnemyController enemy, EnemyStateMachine stateMachine, string animBoolName, string animTrigerName, bool isDistanceAttack, Transform hitBox) : base(enemy, stateMachine, animBoolName)
+    public AttackState(EnemyController enemy, EnemyStateMachine stateMachine, string animBoolName, string animTrigerName, Transform hitBox) : base(enemy, stateMachine, animBoolName)
     {
         _animTrigerName = animTrigerName;
         _hitBox = hitBox;
@@ -24,7 +21,6 @@ public class AttackState : EnemyState
     public override void Exit()
     {
         _timeAttack = 0;
-        //EnemyController.IsAttack = false;
         base.Exit();
     }
 
@@ -36,7 +32,11 @@ public class AttackState : EnemyState
         {
             StateMachine.ChangeState(EnemyController.IdleState);
         }
-     
+        else if (EnemyController.IsDistanceAttack())
+        {
+            StateMachine.ChangeState(EnemyController.ShootState);
+        }
+
     }
 
     public override void PhysicsUpdate()
@@ -53,5 +53,5 @@ public class AttackState : EnemyState
     {
         EnemyController.Animator.SetTrigger(_animTrigerName);
     }
-    
+
 }

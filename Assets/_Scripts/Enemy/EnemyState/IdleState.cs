@@ -13,7 +13,6 @@ public class IdleState : EnemyState
 
     public override void Enter()
     {
-       
         _timeIdle = Random.Range(0.5f, 2f);
         base.Enter();
     }
@@ -36,9 +35,11 @@ public class IdleState : EnemyState
         {
             StateMachine.ChangeState(EnemyController.ChaseState);
         }
+        else if (EnemyController.IsDistanceAttack())
+        {
+            StateMachine.ChangeState(EnemyController.ShootState);
+        }
     }
-
-
 
     public override void PhysicsUpdate()
     {

@@ -2,7 +2,6 @@ using UnityEngine;
 public class Crossbow : MonoBehaviour
 {
     [SerializeField] Transform _castPoint;
-    //[SerializeField] Vector3 _direction;
     [SerializeField] SelectEquipment _selectEquipment;
 
     ArrowData _normalArrow;

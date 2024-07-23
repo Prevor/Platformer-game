@@ -6,7 +6,7 @@ using Unity.Profiling;
 
 public class DataCollector : MonoBehaviour
 {
-    private float dataCollectionInterval = 30.0f; // ???????? ????? ????? ? ????????
+    private float dataCollectionInterval = 30.0f;
     private float nextDataCollectionTime;
     private string logFilePath;
 
@@ -17,10 +17,10 @@ public class DataCollector : MonoBehaviour
     {
         public float timestamp;
         public float avgFps;
-        public long totalMemory;
-        public long reservedMemory;
-        public long monoMemory;
-        public float cpuUsage;
+        public long avgTotalMemory;
+        public long avgReservedMemory;
+        public long avgMonoMemory;
+        public float avgCpuUsage;
     }
 
     [System.Serializable]
@@ -31,8 +31,11 @@ public class DataCollector : MonoBehaviour
 
     private PerformanceDataList performanceDataList = new PerformanceDataList();
 
-    // ?????? ??? ?????????? ??????? FPS
     private List<float> fpsValues = new List<float>();
+    private List<long> totalMemoryValues = new List<long>();
+    private List<long> reservedMemoryValues = new List<long>();
+    private List<long> monoMemoryValues = new List<long>();
+    private List<float> cpuUsageValues = new List<float>();
 
     void Start()
     {
@@ -44,14 +47,16 @@ public class DataCollector : MonoBehaviour
             performanceDataList = JsonUtility.FromJson<PerformanceDataList>(json);
         }
 
-        // ????????????? ?????????? ??? ????? ????? ??? ???????????? ?????????
-       // cpuUsageRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Cpu, "Main Thread");
+        cpuUsageRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Internal, "Main Thread", (int)dataCollectionInterval);
     }
 
     void Update()
     {
-        // ??????? ??????? ???????? FPS ?? ??????
         fpsValues.Add(1.0f / Time.deltaTime);
+        totalMemoryValues.Add(Profiler.GetTotalAllocatedMemoryLong());
+        reservedMemoryValues.Add(Profiler.GetTotalReservedMemoryLong());
+        monoMemoryValues.Add(Profiler.GetMonoUsedSizeLong());
+        cpuUsageValues.Add(GetCPUUsage());
 
         if (Time.time >= nextDataCollectionTime)
         {
@@ -60,32 +65,51 @@ public class DataCollector : MonoBehaviour
         }
     }
 
+    void OnDisable()
+    {
+        cpuUsageRecorder.Dispose();
+    }
+
     void CollectData()
     {
         PerformanceData data = new PerformanceData();
         data.timestamp = Time.time;
-        data.avgFps = CalculateAverageFps();
-        data.totalMemory = Profiler.GetTotalAllocatedMemoryLong();
-        data.reservedMemory = Profiler.GetTotalReservedMemoryLong();
-        data.monoMemory = Profiler.GetMonoUsedSizeLong();
-        data.cpuUsage = GetCPUUsage();
+        data.avgFps = CalculateAverage(fpsValues);
+        data.avgTotalMemory = (long)CalculateAverage(totalMemoryValues);
+        data.avgReservedMemory = (long)CalculateAverage(reservedMemoryValues);
+        data.avgMonoMemory = (long)CalculateAverage(monoMemoryValues);
+        data.avgCpuUsage = CalculateAverage(cpuUsageValues);
 
         performanceDataList.data.Add(data);
         SaveData();
 
-        // ???????? ?????? ??????? FPS ????? ????? ?????
         fpsValues.Clear();
+        totalMemoryValues.Clear();
+        reservedMemoryValues.Clear();
+        monoMemoryValues.Clear();
+        cpuUsageValues.Clear();
     }
 
-    float CalculateAverageFps()
+    float CalculateAverage(List<float> values)
     {
-        if (fpsValues.Count == 0) return 0.0f;
-        float totalFps = 0.0f;
-        foreach (float fps in fpsValues)
+        if (values.Count == 0) return 0.0f;
+        float total = 0.0f;
+        foreach (float value in values)
         {
-            totalFps += fps;
+            total += value;
         }
-        return totalFps / fpsValues.Count;
+        return total / values.Count;
+    }
+
+    long CalculateAverage(List<long> values)
+    {
+        if (values.Count == 0) return 0;
+        long total = 0;
+        foreach (long value in values)
+        {
+            total += value;
+        }
+        return total / values.Count;
     }
 
     float GetCPUUsage()

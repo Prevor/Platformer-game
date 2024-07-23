@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour
     //Combo
     [SerializeField] private float _timeForNextCombo;
     [SerializeField] private float _comboLock;
-    private int _currentCombo = 0;
+    private int _currentCombo;
     private bool _canAttack = true;
     private float _comboCurrentTimer;
     //Shooting

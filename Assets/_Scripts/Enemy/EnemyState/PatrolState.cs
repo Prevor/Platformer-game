@@ -1,14 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class PatrolState : EnemyState
 {
-
     private float _radiusPatrol;
     private Vector3 _lastPosition;
     private Vector3 _targetPosition;
+
     public PatrolState(EnemyController enemy, EnemyStateMachine stateMachine, string animBoolName, float radiusPatrol) : base(enemy, stateMachine, animBoolName)
     {
         _radiusPatrol = radiusPatrol;
@@ -32,10 +29,13 @@ public class PatrolState : EnemyState
         {
             StateMachine.ChangeState(EnemyController.IdleState);
         }
-        if (EnemyController.IsChase)
+        else if (EnemyController.IsChase)
         {
             StateMachine.ChangeState(EnemyController.ChaseState);
-
+        }
+        else if (EnemyController.IsDistanceAttack())
+        {
+            StateMachine.ChangeState(EnemyController.ShootState);
         }
     }
 

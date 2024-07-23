@@ -20,11 +20,6 @@ public class PlayerAttackState : PlayerState
         {
             StateMachine.ChangeState(Player.IdleState);
         }
-        //else if (Player.PlayerController.)
-        //{
-
-        //}
-
     }
 
     public override void PhysicsUpdate()

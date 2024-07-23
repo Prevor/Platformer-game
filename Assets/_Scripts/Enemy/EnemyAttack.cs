@@ -1,9 +1,12 @@
+using Tripolygon.UModeler.UI.Input;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
 
 public class EnemyAttack : MonoBehaviour
 {
     [SerializeField] private EnemyController _enemy;
     [SerializeField] private ParticleSystem _hitEffect;
+
 
     private void OnTriggerEnter(Collider other)
     {
