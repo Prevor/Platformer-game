@@ -70,5 +70,10 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IBurnable
     {
         Debug.Log("Enemy die");
     }
+
+    public void KnocBack(Vector3 direction, float force)
+    {
+        throw new System.NotImplementedException();
+    }
 }
 

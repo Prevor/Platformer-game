@@ -200,7 +200,7 @@ public class PlayerController : MonoBehaviour
 
                 PlayerShoot?.Invoke();
                 
-                StartCoroutine(LockShooting( 0.5f));
+                StartCoroutine(LockShooting( 1f));
             }
         };
 
@@ -245,7 +245,10 @@ public class PlayerController : MonoBehaviour
         _jumpCount = 0;
         _isAttack = false;
     }
-
+    public void PlayerKnockBack(Vector3 direction, float force)
+    {
+        _controller.Move(direction * force * Time.fixedDeltaTime);
+    }
     public void RespawnPlayer()
     {
         _isDead = false;

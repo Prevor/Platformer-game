@@ -18,19 +18,23 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public void TakeDamage(DamageType damageType, int damage)
     {
         _playerController.IsGetingHit = true;
-
-        health = Mathf.Clamp(health - damage, 0, maxHealth);
+       // health = Mathf.Clamp(health - damage, 0, maxHealth);
         Debug.Log("Player HP:" + health);
 
         if (health == 0)
         {
             Die();
         }
+    }  
+    public void KnocBack(Vector3 direction, float force)
+    {
+        _playerController.PlayerKnockBack(direction, force);
     }
-
     private void Die()
     {
         _playerController.IsDead = true;
         Debug.Log("Game Over. Press R to restart");
     }
+
+  
 }

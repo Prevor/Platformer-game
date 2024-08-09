@@ -16,4 +16,5 @@ MonoBehaviour:
   _arrowImage: {fileID: 21300000, guid: 547c2f60da241ee4ba760c0474f3db30, type: 3}
   _damageType: 2
   _damage: 8
-  _speed: 20
+  _speed: 40
+  _forceKnockBack: 10

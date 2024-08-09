@@ -20,6 +20,8 @@ public class Arrow : MonoBehaviour, IPoolable
     ObjectPool<ParticleSystem> _objectFirePool;
    
     [SerializeField] GameObject _hitPrefab;
+    private float _forceKnockBack;
+    private Vector3 _directionKnockBack;
 
     private void Awake()
     {
@@ -56,10 +58,16 @@ public class Arrow : MonoBehaviour, IPoolable
     private void OnTriggerEnter(Collider other)
     {
         SpawnHitEffect(_hitPrefab);
-        
-        IDamageable damageable = other.GetComponent<IDamageable>();
+
+        IDamageable damageable = other.GetComponentInParent<IDamageable>();
+
         if (damageable != null)
         {
+            Vector3 directionKnockBack = (other.transform.position - transform.position).normalized;
+
+
+            damageable.KnocBack(_directionKnockBack, _forceKnockBack);
+
             switch (_damageType)
             {
                 case DamageType.Fire:
@@ -127,8 +135,10 @@ public class Arrow : MonoBehaviour, IPoolable
         Destroyed?.Invoke(this);
     }
 
-    public void FlyInDirection(Vector3 flyInDirection, float speed)
+    public void FlyInDirection(Vector3 flyInDirection, float speed, float forceKnockBack)
     {
         _rigidbody.velocity = flyInDirection * speed;
+        _forceKnockBack = forceKnockBack;
+        _directionKnockBack = flyInDirection;
     }
 }

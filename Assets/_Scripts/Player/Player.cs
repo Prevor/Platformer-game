@@ -5,6 +5,9 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform _playerCamera;
     [SerializeField] private Animator _animator;
     [SerializeField] private Crossbow _crossbow;
+    [SerializeField] private int _indexWeapon;
+    [SerializeField] private GameObject[] _weapons;
+
 
     //Player State
     public PlayerStateMachine StateMachine { get; private set; }
@@ -24,6 +27,7 @@ public class Player : MonoBehaviour
     public Crossbow Crossbow { get; private set; }
     public CharacterController CharacterController { get; internal set; }
     public Transform PlayerCamera { get; private set; }
+    public TargetSelectPlayer TargetSelectPlayer { get; private set; }
 
     private void Awake()
     {
@@ -46,6 +50,8 @@ public class Player : MonoBehaviour
         PlayerCamera = _playerCamera;
         Crossbow = _crossbow;
         StateMachine.Initialize(IdleState);
+        TargetSelectPlayer = GetComponent<TargetSelectPlayer>();
+        SelectedWeapon(_indexWeapon);
     }
     private void Update()
     {
@@ -54,5 +60,9 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         StateMachine.CurrentState.PhysicsUpdate();
+    }
+    private void SelectedWeapon(int weaponIndex)
+    {
+        _weapons[weaponIndex - 1].SetActive(true);
     }
 }

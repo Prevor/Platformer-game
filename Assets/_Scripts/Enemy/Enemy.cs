@@ -6,7 +6,13 @@ public class Enemy : MonoBehaviour, IDamageable
     [SerializeField] private TextMeshPro _healthText;
 
     [SerializeField] private int _health;
+    [SerializeField] private Rigidbody _rigidbody;
     public int Health { get => _health; set => _health = value; }
+
+    public void KnocBack(Vector3 direction, float force)
+    {
+        _rigidbody.AddForce(direction * force, ForceMode.Impulse);
+    }
 
     public void TakeDamage(DamageType damageType, int damage)
     {

@@ -19,12 +19,12 @@ public class PlayerGetHitState : PlayerState
         Player.PlayerController.IsGetingHit = false;
     }
 
-    public override void LogicUpdate() 
+    public override void LogicUpdate()
     {
         if (Player.PlayerController.IsGetingHit)
         {
             StateMachine.ChangeState(Player.GetHitState);
-            
+
         }
         if (Player.PlayerController.IsDead)
         {
@@ -36,5 +36,9 @@ public class PlayerGetHitState : PlayerState
         }
     }
 
-    public override void PhysicsUpdate() { }
+    public override void PhysicsUpdate()
+    {
+       
+    }
+  
 }
